@@ -7,6 +7,7 @@ import ipgetter as ipgetter
 import octoprint.plugin
 import octoprint.settings
 from octoprint.server import user_permission
+from octoprint_discordremote import shared_vars
 import os
 import requests
 import socket
@@ -41,74 +42,74 @@ class DiscordRemotePlugin(octoprint.plugin.EventHandlerPlugin,
                 "name": "Octoprint Startup",
                 "enabled": True,
                 "with_snapshot": False,
-                "message": "⏰ I just woke up! What are we gonna print today?\n"
+                "message": "â° I just woke up! What are we gonna print today?\n"
                            "Local IP: {ipaddr} External IP: {externaddr}"
             },
             "shutdown": {
                 "name": "Octoprint Shutdown",
                 "enabled": True,
                 "with_snapshot": False,
-                "message": "💤 Going to bed now!"
+                "message": "ðŸ’¤ Going to bed now!"
             },
             "printer_state_operational": {
                 "name": "Printer state : operational",
                 "enabled": True,
                 "with_snapshot": False,
-                "message": "✅ Your printer is operational."
+                "message": "âœ… Your printer is operational."
             },
             "printer_state_error": {
                 "name": "Printer state : error",
                 "enabled": True,
                 "with_snapshot": False,
-                "message": "⚠️ Your printer is in an erroneous state."
+                "message": "âš ï¸ Your printer is in an erroneous state."
             },
             "printer_state_unknown": {
                 "name": "Printer state : unknown",
                 "enabled": True,
                 "with_snapshot": False,
-                "message": "❔ Your printer is in an unknown state."
+                "message": "â” Your printer is in an unknown state."
             },
             "printing_started": {
                 "name": "Printing process : started",
                 "enabled": True,
                 "with_snapshot": True,
-                "message": "🖨️ I've started printing {file}"
+                "message": "ðŸ–¨ï¸ I've started printing {file}"
             },
             "printing_paused": {
                 "name": "Printing process : paused",
                 "enabled": True,
                 "with_snapshot": True,
-                "message": "⏸️ The printing was paused."
+                "message": "â¸ï¸ The printing was paused."
             },
             "printing_resumed": {
                 "name": "Printing process : resumed",
                 "enabled": True,
                 "with_snapshot": True,
-                "message": "▶️ The printing was resumed."
+                "message": "â–¶ï¸ The printing was resumed."
             },
             "printing_cancelled": {
                 "name": "Printing process : cancelled",
                 "enabled": True,
                 "with_snapshot": True,
-                "message": "🛑 The printing was stopped."
+                "message": "ðŸ›‘ The printing was stopped."
             },
             "printing_done": {
                 "name": "Printing process : done",
                 "enabled": True,
                 "with_snapshot": True,
-                "message": "👍 Printing is done! Took about {time_formatted}"
+                "message": "ðŸ‘ Printing is done! Took about {time_formatted}"
             },
             "printing_failed": {
                 "name": "Printing process : failed",
                 "enabled": True,
                 "with_snapshot": True,
-                "message": "👎 Printing has failed! :("
+                "message": "ðŸ‘Ž Printing has failed! :("
             },
             "printing_progress": {
                 "name": "Printing progress",
                 "enabled": True,
                 "with_snapshot": True,
-                "message": "📢 Printing is at {progress}%",
+                "message": "ðŸ“¢ Printing is at {progress}%",
                 "step": 10
             },
             "test": {  # Not a real message, but we will treat it as one
@@ -131,6 +132,7 @@ class DiscordRemotePlugin(octoprint.plugin.EventHandlerPlugin,
                                        self._logger,
                                        self.command,
                                        self.update_discord_status)
+        shared_vars.init(self._settings.get(['baseurl']))
 
     # ShutdownPlugin mixin
     def on_shutdown(self):
@@ -144,6 +146,7 @@ class DiscordRemotePlugin(octoprint.plugin.EventHandlerPlugin,
             'bottoken': "",
             'channelid': "",
             'allowedusers': "",
+            'baseurl': "",
             'show_local_ip': True,
             'show_external_ip': True,
             'events': self.events,
@@ -160,6 +163,7 @@ class DiscordRemotePlugin(octoprint.plugin.EventHandlerPlugin,
                     admin=[["bottoken"],
                            ["channelid"],
                            ["allowedusers"],
+                           ["baseurl"],
                            ["show_local_ip"],
                            ["show_external_ip"],
                            ['script_before'],
@@ -254,6 +258,7 @@ class DiscordRemotePlugin(octoprint.plugin.EventHandlerPlugin,
                                        self._logger,
                                        self.command,
                                        self.update_discord_status)
+        shared_vars.init(self._settings.get(['baseurl']))
         self.notify_event("test")
 
     # SimpleApiPlugin mixin
